@@ -1,0 +1,9 @@
+sample_name	condition_1	condition_2	sra	fq1	fq2
+SRR5237386	WT	control	SRR5237386.sra		
+SRR5237387	WT	IL_4_treated	SRR5237387.sra		
+SRR5237388	KO	control	SRR5237388.sra		
+SRR5237389	KO	IL_4_treated	SRR5237389.sra		
+SRR5237390	WT	control	SRR5237390.sra		
+SRR5237391	WT	IL_4_treated	SRR5237391.sra		
+SRR5237392	KO	control	SRR5237392.sra		
+SRR5237393	KO	IL_4_treated	SRR5237393.sra		

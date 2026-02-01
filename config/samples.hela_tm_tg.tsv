@@ -1,0 +1,13 @@
+sample_name	condition_1	condition_2	sra	fq1	fq2
+KO_DMSO_1	KO	Ctrl		KO_DMSO_1/KO_DMSO_1_R1.fq.gz	KO_DMSO_1/KO_DMSO_1_R2.fq.gz
+KO_DMSO_2	KO	Ctrl		KO_DMSO_2/KO_DMSO_2_R1.fq.gz	KO_DMSO_2/KO_DMSO_2_R2.fq.gz
+KO_Tg_1	KO	Tg		KO_Tg_1/KO_Tg_1_R1.fq.gz	KO_Tg_1/KO_Tg_1_R2.fq.gz
+KO_Tg_2	KO	Tg		KO_Tg_2/KO_Tg_2_R1.fq.gz	KO_Tg_2/KO_Tg_2_R2.fq.gz
+KO_Tm_1	KO	Tm		KO_Tm_1/KO_Tm_1_R1.fq.gz	KO_Tm_1/KO_Tm_1_R2.fq.gz
+KO_Tm_2	KO	Tm		KO_Tm_2/KO_Tm_2_R1.fq.gz	KO_Tm_2/KO_Tm_2_R2.fq.gz
+WT_DMSO_1	WT	Ctrl		WT_DMSO_1/WT_DMSO_1_R1.fq.gz	WT_DMSO_1/WT_DMSO_1_R2.fq.gz
+WT_DMSO_2	WT	Ctrl		WT_DMSO_2/WT_DMSO_2_R1.fq.gz	WT_DMSO_2/WT_DMSO_2_R2.fq.gz
+WT_Tg_1	WT	Tg		WT_Tg_1/WT_Tg_1_R1.fq.gz	WT_Tg_1/WT_Tg_1_R2.fq.gz
+WT_Tg_2	WT	Tg		WT_Tg_2/WT_Tg_2_R1.fq.gz	WT_Tg_2/WT_Tg_2_R2.fq.gz
+WT_Tm_1	WT	Tm		WT_Tm_1/WT_Tm_1_R1.fq.gz	WT_Tm_1/WT_Tm_1_R2.fq.gz
+WT_Tm_2	WT	Tm		WT_Tm_2/WT_Tm_2_R1.fq.gz	WT_Tm_2/WT_Tm_2_R2.fq.gz

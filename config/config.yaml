@@ -1,0 +1,60 @@
+mouse_muscle:
+  lib:
+    strandness: un
+    read_length: 150
+    adapter: 'illumina'
+  samples: config/samples.mouse_muscle.tsv
+  references:
+    star: references/mouse_ref/star_index.150PE
+    id_to_symbol: references/mouse_ref/ensid_to_symbol.tsv
+  diff_qc:
+    design: '~ condition_1 + condition_2'
+  diff_exp:
+    contrasts:
+      WT_vs_KO: ['condition_1', 'WT', 'KO']
+    filter_by:
+      6months: condition_2
+      22months: condition_2
+
+mouse_macrophage:
+  lib:
+    strandness: un
+    read_length: 100
+    adapter: none
+  samples: config/samples.mouse_macrophage.tsv
+  references:
+    star: references/mouse_ref/star_index
+    id_to_symbol: references/mouse_ref/ensid_to_symbol.tsv
+  diff_qc:
+    design: '~ condition_1 + condition_2'
+  diff_exp:
+    contrasts: 
+      IL_4_vs_ctrl: ['condition_2', 'IL_4_treated', 'control']
+    filter_by:
+      WT: condition_1
+      KO: condition_1
+
+
+mouse_fat:
+  lib:
+    strandness: un
+    read_length: 150
+    adapter: 'illumina'
+  samples: config/samples.mouse_fat.tsv
+  references:
+    star: references/mouse_ref/star_index.150PE
+  diff_qc:
+    design: '~ condition_1 + condition_2'
+
+
+hela_tm_tg:
+  lib:
+    strandness: un
+    read_length: 150
+    adapter: 'illumina'
+  samples: config/samples.hela_tm_tg.tsv
+  references:
+    star: references/human_ref/star_index.150PE
+  diff_qc:
+    design: '~ condition_1 + condition_2'
+  

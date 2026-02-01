@@ -1,0 +1,17 @@
+sample_name	condition_1	condition_2	sra	fq1	fq2
+A1	WT	6months		A1/A1_R1.fq.gz	A1/A1_R2.fq.gz
+A2	WT	6months		A2/A2_R1.fq.gz	A2/A2_R2.fq.gz
+A3	WT	6months		A3/A3_R1.fq.gz	A3/A3_R2.fq.gz
+A4	WT	6months		A4/A4_R1.fq.gz	A4/A4_R2.fq.gz
+B1	KO	6months		B1/B1_R1.fq.gz	B1/B1_R2.fq.gz
+B2	KO	6months		B2/B2_R1.fq.gz	B2/B2_R2.fq.gz
+B3	KO	6months		B3/B3_R1.fq.gz	B3/B3_R2.fq.gz
+B4	KO	6months		B4/B4_R1.fq.gz	B4/B4_R2.fq.gz
+C1	WT	22months		C1/C1_R1.fq.gz	C1/C1_R2.fq.gz
+C2	WT	22months		C2/C2_R1.fq.gz	C2/C2_R2.fq.gz
+C3	WT	22months		C3/C3_R1.fq.gz	C3/C3_R2.fq.gz
+C4	WT	22months		C4/C4_R1.fq.gz	C4/C4_R2.fq.gz
+D1	KO	22months		D1/D1_R1.fq.gz	D1/D1_R2.fq.gz
+D2	KO	22months		D2/D2_R1.fq.gz	D2/D2_R2.fq.gz
+D3	KO	22months		D3/D3_R1.fq.gz	D3/D3_R2.fq.gz
+D5	KO	22months		D5/D5_R1.fq.gz	D5/D5_R2.fq.gz

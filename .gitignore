@@ -1,0 +1,12 @@
+/data
+/references
+/results
+/jbrowse2
+/temp
+
+.snakemake/
+.vscode/
+.bpipe/
+__pycache__/
+*.pyc
+

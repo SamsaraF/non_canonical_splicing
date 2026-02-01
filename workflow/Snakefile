@@ -1,0 +1,36 @@
+# -*- coding=utf-8 -*-
+
+# Input definitions
+DATASET = 'hela_tm_tg'
+
+# Output definitions
+def get_final_outputs(wildcards):
+    output_files = []
+    for _, row in samples.iterrows():
+        condition_1 = row['condition_1']
+        condition_2 = row['condition_2']
+        replicate = row['replicate']
+        output_files.append(
+            f'results/{DATASET}/bigwig/{condition_1}.{condition_2}.{replicate}.bw'
+        )
+
+    return output_files
+
+def get_deseq2_outputs(wildcards):
+    return [
+        f'results/{DATASET}/deseq2/cluster.pdf',
+        f'results/{DATASET}/deseq2/pca.pdf'
+    ]
+
+
+include: 'rules/common.smk'
+include: 'rules/fastq_dump.smk'
+include: 'rules/trim_adapter.smk'
+include: 'rules/star_align.smk'
+include: 'rules/generate_bigwig.smk'
+include: 'rules/diff_exp.smk'
+include: 'rules/junction_stat.smk'
+
+
+rule all:
+    input: f'results/{DATASET}/junctions/non_canonical_junctions.all.cpms.tsv'
