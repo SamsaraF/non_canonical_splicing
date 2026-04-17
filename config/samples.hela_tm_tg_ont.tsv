@@ -1,0 +1,7 @@
+sample_name	condition_1	condition_2	sra	raw_fq	clean_fq
+KO_DMSO	KO	Ctrl		KO_DMSO_1.fq.gz
+KO_Tg	KO	Tg		KO_Tg_1.fq.gz
+KO_Tm	KO	Tm		KO_Tm_1.fq.gz
+WT_DMSO	WT	Ctrl		WT_DMSO_1.fq.gz
+WT_Tg	WT	Tg		WT_Tg_1.fq.gz
+WT_Tm	WT	Tm		WT_Tm_1.fq.gz

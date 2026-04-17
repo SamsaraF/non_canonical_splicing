@@ -3,6 +3,7 @@
 /results
 /jbrowse2
 /temp
+/software
 
 .snakemake/
 .vscode/

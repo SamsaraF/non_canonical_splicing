@@ -23,17 +23,23 @@ rule star_align:
         ref = lambda wildcards: config[wildcards.dataset]['references']['star'],
         align_ends = 'Local',
         out_dir = subpath(output[0], parent=True),
-        read_command = get_read_command
+        append_sjdb = '',
+        twopass_mode = 'None',
+        read_command = get_read_command,
+        align_sjdb_overhang = 1, # mannual set alignSJDBoverhangMin to 1 for better sensitivity
+        sjfilter_dist = '0 0 5 10',
+        sjfilter_overhang = '2 2 2 2',
+        sjfilter_count = '1 1 1 1'
     threads: 16
     shell: 
         'STAR --runMode alignReads --outFilterType BySJout --outSAMattributes NH HI AS NM MD --runThreadN {threads} '
-        '--outFilterMultimapNmax 20 --alignSJDBoverhangMin 1 --alignIntronMin 10 '
-        '--outSJfilterOverhangMin 2 2 2 2 --outSJfilterDistToOtherSJmin 0 0 5 10 --outSJfilterCountTotalMin 1 1 1 1 '
+        '--outFilterMultimapNmax 20 --alignIntronMin 10 --alignSJDBoverhangMin {params.align_sjdb_overhang} '
+        '--outSJfilterOverhangMin {params.sjfilter_overhang} --outSJfilterDistToOtherSJmin {params.sjfilter_dist} --outSJfilterCountTotalMin {params.sjfilter_count} '
         '--alignIntronMax {params.max_intron} --alignMatesGapMax {params.max_intron} ' # mannual set max intron length
-        '--alignEndsType {params.align_ends} '
-        #'--outSAMattrIHstart 0 --outSAMstrandField intronMotif ' # cufflinks compatibility
+        '--alignEndsType {params.align_ends} --twopassMode {params.twopass_mode} {params.append_sjdb} '
+        '--outSAMattrIHstart 0 --outSAMstrandField intronMotif ' # stringtie compatibility
         '--outFilterScoreMinOverLread 0.3 --outFilterMatchNminOverLread 0.3 '
-        ' --outSAMtype BAM Unsorted SortedByCoordinate '
+        '--outSAMtype BAM Unsorted SortedByCoordinate '
         '--scoreGapNoncan -4 '
         '--quantMode TranscriptomeSAM GeneCounts --outReadsUnmapped Fastx --genomeDir {params.ref} '
         '--readFilesIn {input.r1} {input.r2} {params.read_command} --outFileNamePrefix {params.out_dir}/'
@@ -45,3 +51,29 @@ use rule star_align as star_align_soft_clip with:
         r2 = 'results/{dataset}/star_align/{sample_name}/Unmapped.out.mate2'
     pathvars:
         star_out = 'star_align_soft_clip'
+
+
+use rule star_align as star_align_2pass_per_sample with:
+    params:
+        twopass_mode = 'Basic'
+    pathvars:
+        star_out = 'star_align_2pass_self'
+
+rule glob_non_canonical_junctions:
+    input:
+        [f'results/{{dataset}}/star_align/{sample_name}/SJ.out.tab' for sample_name in samples['sample_name'].tolist()]
+    output:
+        'results/{dataset}/star_align_2pass_nc/sjdbFile.tsv'
+    shell:
+        "cat {input} | awk -v OFS='\\t' '$5==0&&$6==0{{print $1,$2,$3,$4}}' | sort -k 1,1V -k 2,2n -u > {output}"
+
+
+use rule star_align as star_align_2pass_nc with:
+    input:
+        unpack(get_trimmed_fastq),
+        sjdb = rules.glob_non_canonical_junctions.output
+    params:
+        append_sjdb = lambda wildcards, input: f'--sjdbFileChrStartEnd {input.sjdb}',
+        sjfilter_overhang = '12 12 12 12'
+    pathvars:
+        star_out = 'star_align_2pass_nc'

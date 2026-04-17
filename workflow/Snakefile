@@ -3,6 +3,9 @@
 # Input definitions
 DATASET = 'hela_tm_tg'
 
+pathvars:
+    star_method = '_2pass_nc'
+
 # Output definitions
 def get_final_outputs(wildcards):
     output_files = []
@@ -11,7 +14,7 @@ def get_final_outputs(wildcards):
         condition_2 = row['condition_2']
         replicate = row['replicate']
         output_files.append(
-            f'results/{DATASET}/bigwig/{condition_1}.{condition_2}.{replicate}.bw'
+            f'results/{DATASET}/bam<star_method>/{condition_1}.{condition_2}.{replicate}.bam.bai'
         )
 
     return output_files
@@ -30,7 +33,15 @@ include: 'rules/star_align.smk'
 include: 'rules/generate_bigwig.smk'
 include: 'rules/diff_exp.smk'
 include: 'rules/junction_stat.smk'
+include: 'rules/nanopore.smk'
 
+def get_nanopore_mapping_outputs(wildcards):
+    output_files = []
+    for _, row in samples.iterrows():
+        output_files.append(
+            f'results/{DATASET}/bam<star_method>/{row["condition_1"]}.{row["condition_2"]}.{row["replicate"]}.bam.bai'
+        )
+    return output_files
 
 rule all:
-    input: f'results/{DATASET}/junctions/non_canonical_junctions.all.cpms.tsv'
+    input: []

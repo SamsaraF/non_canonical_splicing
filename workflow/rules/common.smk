@@ -40,4 +40,4 @@ def get_trimmed_fastq(wildcards):
 def get_sorted_bam(wildcards):
     query = (wildcards.condition_1, wildcards.condition_2, int(wildcards.replicate))
     sample_name = samples_reverse.loc[query, 'sample_name']
-    return f'results/{wildcards.dataset}/star_align/{sample_name}/Aligned.sortedByCoord.out.bam'
+    return f'results/{wildcards.dataset}/star_align<star_method>/{sample_name}/Aligned.sortedByCoord.out.bam'

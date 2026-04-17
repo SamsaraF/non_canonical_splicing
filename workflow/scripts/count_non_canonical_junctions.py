@@ -2,7 +2,8 @@
 import pandas as pd
 from snakemake.script import snakemake
 
-
+# STAR junctions is 1-based and start at intronic bases;
+# if needed, the junction start should be minus 1 to 0-based; minus 2 to hisat2 splice site coordinate
 star_sjout_info_columns = {
     'chr': pd.StringDtype(),
     'start': pd.Int64Dtype(),
@@ -32,5 +33,10 @@ for sj_count, sample in zip(sj_all, snakemake.params.samples):
 
 non_canonical_sj_matrix = pd.concat(sj_all, axis=1)
 non_canonical_sj_matrix.fillna(0, inplace=True)
+
+# drop empty
+non_canonical_sj_matrix = non_canonical_sj_matrix.loc[
+    (non_canonical_sj_matrix != 0).any(axis=1)
+]
 
 non_canonical_sj_matrix.to_csv(snakemake.output[0], sep='\t')

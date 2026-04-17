@@ -2,13 +2,13 @@
 
 rule link_bam:
     input: get_sorted_bam
-    output: 'results/{dataset}/bam/{condition_1}.{condition_2}.{replicate}.bam'
+    output: 'results/{dataset}/bam<star_method>/{condition_1}.{condition_2}.{replicate}.bam'
     shell: 'ln -s $(realpath {input}) {output}'
 
 
 rule index_bam:
     input: rules.link_bam.output
-    output: 'results/{dataset}/bam/{condition_1}.{condition_2}.{replicate}.bam.bai'
+    output: 'results/{dataset}/bam<star_method>/{condition_1}.{condition_2}.{replicate}.bam.bai'
     threads: 4
     shell: 'samtools index -@ {threads} {input}'
 
