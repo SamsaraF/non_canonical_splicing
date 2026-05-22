@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-from sys import exit
+from snakemake.script import snakemake
 from collections import defaultdict as dd
-from argparse import ArgumentParser, FileType
 
 # modified from hisat2_extract_splice_sites.py
 # see: https://github.com/DaehwanKimLab/hisat2/blob/master/hisat2_extract_splice_sites.py
@@ -47,6 +46,7 @@ def extract_transcript_intronic_regions(gtf_file):
         else:
             trans[transcript_id][2].append([left, right])
 
+    output_lines = []
     # Sort exons and merge where separating introns are <=5 bps
     for transcript_id, [chrom, strand, exons] in trans.items():
         exons.sort()
@@ -65,19 +65,11 @@ def extract_transcript_intronic_regions(gtf_file):
         # format intronic regions
         intron_regions = ';'.join(['{}-{}'.format(intron[0], intron[1]) for intron in trans[transcript_id][3]])
     
-        print('{}\t{}\t{}\t{}'.format(transcript_id, chrom, strand, intron_regions))
+        output_lines.append(f'{transcript_id}\t{chrom}\t{strand}\t{intron_regions}')
+
+    with open(snakemake.output[0], 'w') as outfile:
+        outfile.write('\n'.join(output_lines))
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser(
-        description='Extract intronic regions for each transcript from a GTF file')
-    parser.add_argument('gtf_file',
-        nargs='?',
-        type=FileType('r'),
-        help='input GTF file (use "-" for stdin)')
-
-    args = parser.parse_args()
-    if not args.gtf_file:
-        parser.print_help()
-        exit(1)
-    extract_transcript_intronic_regions(args.gtf_file)
+    extract_transcript_intronic_regions(snakemake.input[0])

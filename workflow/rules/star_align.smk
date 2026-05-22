@@ -31,7 +31,7 @@ rule star_align:
         sjfilter_overhang = '2 2 2 2',
         sjfilter_count = '1 1 1 1'
     threads: 16
-    shell: 
+    shell:
         'STAR --runMode alignReads --outFilterType BySJout --outSAMattributes NH HI AS NM MD --runThreadN {threads} '
         '--outFilterMultimapNmax 20 --alignIntronMin 10 --alignSJDBoverhangMin {params.align_sjdb_overhang} '
         '--outSJfilterOverhangMin {params.sjfilter_overhang} --outSJfilterDistToOtherSJmin {params.sjfilter_dist} --outSJfilterCountTotalMin {params.sjfilter_count} '
@@ -39,7 +39,7 @@ rule star_align:
         '--alignEndsType {params.align_ends} --twopassMode {params.twopass_mode} {params.append_sjdb} '
         '--outSAMattrIHstart 0 --outSAMstrandField intronMotif ' # stringtie compatibility
         '--outFilterScoreMinOverLread 0.3 --outFilterMatchNminOverLread 0.3 '
-        '--outSAMtype BAM Unsorted SortedByCoordinate '
+        '--outSAMtype BAM SortedByCoordinate '
         '--scoreGapNoncan -4 '
         '--quantMode TranscriptomeSAM GeneCounts --outReadsUnmapped Fastx --genomeDir {params.ref} '
         '--readFilesIn {input.r1} {input.r2} {params.read_command} --outFileNamePrefix {params.out_dir}/'
