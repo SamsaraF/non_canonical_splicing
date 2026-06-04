@@ -1,0 +1,62 @@
+# -*- coding=utf-8 -*-
+
+sample_list = [ f'{g}_{i}' for g in ['control', 'experiment'] for i in range(1, 6) ]
+
+rule all:
+    input: expand('data/star_align/sample.{sample}/Aligned.sortedByCoord.out.bam', sample=sample_list)
+
+
+rule generate_genome:
+    input:
+        gtf = '../references/Homo_sapiens/gencode.v49.annotation.gtf.gz',
+        genome = '../references/Homo_sapiens/GRCh38.p14.genome.bgzip.fa.gz'
+    output:
+        gtf = 'data/annotation.gtf',
+        genome = 'data/genome.fa'
+    params:
+        outdir = subpath(output.gtf, parent=True)
+    shell: 'uv run scripts/create_sampled_mock_genome.py -a {input.gtf} -g {input.genome} -o {params.outdir}'
+
+
+rule add_splice_site:
+    input: rules.generate_genome.output.gtf
+    output: 'data/annotation.mock_spliced.gtf'
+    shell: 'uv run scripts/add_splicing_site.py -a {input.gtf} -o {output}'
+
+
+rule create_mock_usage:
+    input: rules.add_splice_site.output
+    output: 'data/mock_transcripts_usage.tsv'
+    shell: 'uv run scripts/simulate_transcript_abundances.py -a {input.gtf} -o {output}'
+
+
+rule create_sample_fastq_files:
+    input:
+        gtf = rules.generate_genome.output.gtf,
+        genome = rules.generate_genome.output.genome,
+        usage = rules.create_mock_usage.output
+    output:
+        expand('data/fastq/sample.{sample}.fastq', sample=sample_list)
+    params:
+        outdir = 'data/fastq'
+    shell: 'uv run scripts/create_mock_fastq.py -a {input.gtf} -g {input.genome} -u {input.usage} -o {params.outdir}'
+
+
+rule star_map:
+    input:
+        fastq = 'data/fastq/sample.{sample}.fastq',
+        gtf = rules.generate_genome.output.gtf,
+        genome = rules.generate_genome.output.genome
+    output:
+        bam = 'data/star_align/sample.{sample}/Aligned.sortedByCoord.out.bam',
+    params:
+        outdir = subpath(output.bam, parent=True),
+        ref = 'data/star_index'
+    threads: 4
+    shell: 
+        'STAR --runMode alignReads --runThreadN {threads} --outFilterType BySJout --outSAMattrIHstart 0 --outSAMstrandField intronMotif '
+        '--outSAMtype BAM SortedByCoordinate --outReadsUnmapped Fastx --genomeDir {params.ref} '
+        '--readFilesIn {input} --outFileNamePrefix {params.outdir}/'
+
+
+

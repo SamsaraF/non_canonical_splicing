@@ -54,7 +54,7 @@ for ref_name base_url in "${(@kv)ref_urls}"; do
         samtools faidx "${files[genome]}"
     fi
     if ! [ -d "./star_index" ]; then
-        STAR genomeGenerate --genomeDir ./star_index --runThreadN 32 --genomeFastaFiles "${files[genome]}" --sjdbGTFfile "${files[gtf]}"
+        STAR --runMode genomeGenerate --genomeDir ./star_index --runThreadN 32 --genomeFastaFiles "${files[genome]}" --sjdbGTFfile "${files[gtf]}"
     fi
 
     # Salmon transctipt index

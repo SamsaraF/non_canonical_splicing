@@ -47,7 +47,7 @@ splice_sites = pd.read_table(
     header=None, names=['chr', 'start', 'end', 'strand'],
     dtype={'chr': str, 'start': int, 'end': int, 'strand': str}
 )
-# pyfaidx use 1-based start and 0-based end, so intron splice motifs are at [start+1, start+3] and [end-2, end]
+# pyfaidx slicing uses 0-based coordinates, so intron splice motifs are at [start+1, start+3] and [end-2, end]
 splice_sites['start_motif'] = splice_sites.apply(
     lambda x: GENOME_FASTA[x['chr']][x['start']+1:x['start']+3].seq.upper(), axis=1
 )
