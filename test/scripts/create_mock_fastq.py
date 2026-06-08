@@ -1,12 +1,13 @@
 import polars as pl
 import numpy as np
+import os
 from pyfaidx import Fasta
 from argparse import ArgumentParser
 from typing import Literal
 
 
-np.random.seed(42)
-pl.set_random_seed(42)
+np.random.seed(int(os.getenv("NUMPY_RANDOM_SEED", 42)))
+pl.set_random_seed(int(os.getenv("POLARS_RANDOM_SEED", 42)))
 
 
 def extract_sequence(chr: str, strand: Literal['+','-'], exons: list[tuple[int, int]], genome_fasta: Fasta):
@@ -81,9 +82,10 @@ def create_mock_fastq(sample_annot_path: str, fasta_path: str, usage_file_path: 
                     read_seq = row['sequence'][start: start + read_length]
                     # add random sequencing errors
                     error_mask = np.random.rand(len(read_seq)) < error_rate
-                    
+                    random_seq_err = np.random.choice(list('ACGT'), size=len(read_seq))
+                    read_seq_with_err = ''.join([random_seq_err[i] if error_mask[i] else read_seq[i] for i in range(len(read_seq))])
 
-                    fastq_read = format_fastq_read(f"seed42:read_{read_id}", read_seq)
+                    fastq_read = format_fastq_read(f"seed42:read_{read_id}", read_seq_with_err)
                     sample_fastq.write(fastq_read + '\n')
 
 
@@ -94,7 +96,7 @@ if __name__ == "__main__":
     parser.add_argument('-u', '--usage-file', type=str, required=True, help='Path to simulated transcript usage tsv file')
     parser.add_argument('-o', '--out-dir', type=str, required=True, help='Directory to output mock fastq files')
     parser.add_argument('--read_length', type=int, default=100, help='Read length for simulated fastq reads')
-
+    parser.add_argument('--error_rate', type=float, default=0.002, help='Error rate for simulated sequencing errors')
     args = parser.parse_args()
-    create_mock_fastq(args.sample_annot, args.genome_path, args.usage_file, args.out_dir, args.read_length)
+    create_mock_fastq(args.sample_annot, args.genome_path, args.usage_file, args.out_dir, args.read_length, args.error_rate)
     

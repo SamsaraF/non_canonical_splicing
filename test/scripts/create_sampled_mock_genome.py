@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 import os
 
 
-pl.set_random_seed(42)
+pl.set_random_seed(int(os.getenv("POLARS_RANDOM_SEED", 42)))
 
 
 def calc_gap_length(gene_df: pl.DataFrame, current_pos: int, chr_size: int, compared: Literal['next', 'prev']='next', max_length=100000) -> int:

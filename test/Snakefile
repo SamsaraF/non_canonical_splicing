@@ -3,7 +3,7 @@
 sample_list = [ f'{g}_{i}' for g in ['control', 'experiment'] for i in range(1, 6) ]
 
 rule all:
-    input: expand('data/star_align/sample.{sample}/Aligned.sortedByCoord.out.bam', sample=sample_list)
+    input: expand('data/star_align_3/sample.{sample}/Aligned.sortedByCoord.out.bam', sample=sample_list)
 
 
 rule generate_genome:
@@ -56,7 +56,61 @@ rule star_map:
     shell: 
         'STAR --runMode alignReads --runThreadN {threads} --outFilterType BySJout --outSAMattrIHstart 0 --outSAMstrandField intronMotif '
         '--outSAMtype BAM SortedByCoordinate --outReadsUnmapped Fastx --genomeDir {params.ref} '
-        '--readFilesIn {input} --outFileNamePrefix {params.outdir}/'
+        '--readFilesIn {input.fastq} --outFileNamePrefix {params.outdir}/'
+
+
+rule star_map_2:
+    input:
+        fastq = 'data/fastq/sample.{sample}.fastq',
+        gtf = rules.generate_genome.output.gtf,
+        genome = rules.generate_genome.output.genome
+    output:
+        bam = 'data/star_align_2/sample.{sample}/Aligned.sortedByCoord.out.bam',
+    params:
+        outdir = subpath(output.bam, parent=True),
+        ref = 'data/star_index'
+    threads: 4
+    shell:
+        'STAR --runMode alignReads --runThreadN {threads} --outFilterType BySJout --outSAMattrIHstart 0 --outSAMstrandField intronMotif '
+        '--outSAMtype BAM SortedByCoordinate --outReadsUnmapped Fastx --genomeDir {params.ref} '
+        '–-outFilterMultimapNmax 1 –-alignSJoverhangMin 8 –-outSJfilterOverhangMin 8 8 8 8 -–outSJfilterCountUniqueMin 3 3 3 3 '
+        '-–outSJfilterCountTotalMin 3 3 3 3 -–outSJfilterDistToOtherSJmin 0 0 0 0 –-scoreGap -4 –-scoreGapNoncan -4 -–scoreGapATAC -4 '
+        '-–alignIntronMax 30000 -–alignMatesGapMax 30000 -–alignSJstitchMismatchNmax -1 -1 -1 -1 '
+        '--readFilesIn {input.fastq} --outFileNamePrefix {params.outdir}/'
+
+
+rule star_map_3:
+    input:
+        fastq = 'data/fastq/sample.{sample}.fastq',
+        gtf = rules.generate_genome.output.gtf,
+        genome = rules.generate_genome.output.genome
+    output:
+        bam = 'data/star_align_3/sample.{sample}/Aligned.sortedByCoord.out.bam',
+    params:
+        outdir = subpath(output.bam, parent=True),
+        ref = 'data/star_index'
+    threads: 4
+    shell:
+        'STAR --runMode alignReads --runThreadN {threads} --outFilterType BySJout --outSAMattrIHstart 0 --outSAMstrandField intronMotif '
+        '--outSAMtype BAM SortedByCoordinate --outReadsUnmapped Fastx --genomeDir {params.ref} '
+        '--outFilterMultimapNmax 20 --alignIntronMin 10 --alignSJDBoverhangMin 1 '
+        '--outSJfilterOverhangMin 2 2 2 2 --outSJfilterDistToOtherSJmin 0 0 5 10 --outSJfilterCountTotalMin 1 1 1 1 '
+        '--alignIntronMax 1000000 --alignMatesGapMax 1000000 '
+        '--alignEndsType Local '
+        '--outFilterScoreMinOverLread 0.3 --outFilterMatchNminOverLread 0.3 '
+        '--scoreGapNoncan -4 '
+        '--readFilesIn {input.fastq} --outFileNamePrefix {params.outdir}/'
 
 
 
+
+rule link_bam:
+    input: rules.star_map.output.bam
+    output: 'data/bam/{sample}.bam'
+    shell: 'ln -s $(realpath --relative-to="data/bam" {input}) {output}'
+
+
+rule index_bam:
+    input: rules.link_bam.output
+    output: 'data/bam/{sample}.bam.bai'
+    shell: 'samtools index {input}'

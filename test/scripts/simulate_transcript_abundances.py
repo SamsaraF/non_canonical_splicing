@@ -1,10 +1,11 @@
 import polars as pl
 import numpy as np
+import os
 from argparse import ArgumentParser
 
 
-np.random.seed(42)
-pl.set_random_seed(42)
+np.random.seed(int(os.getenv("NUMPY_RANDOM_SEED", 42)))
+pl.set_random_seed(int(os.getenv("POLARS_RANDOM_SEED", 42)))
 
 
 def simulate_transcript_abundances(
